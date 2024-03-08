@@ -78,4 +78,11 @@ public class UserController {
         userService.updateInformation(user);
         return ApiRestResponse.success();
     }
+
+    @GetMapping("/user/logout")
+    @ResponseBody
+    public ApiRestResponse<User> logout(HttpSession session) {
+        session.removeAttribute(Constant.IMOOC_MALL_USER);
+        return ApiRestResponse.success();
+    }
 }
