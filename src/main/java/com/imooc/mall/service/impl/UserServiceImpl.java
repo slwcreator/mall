@@ -1,5 +1,6 @@
 package com.imooc.mall.service.impl;
 
+import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.dao.UserMapper;
@@ -41,5 +42,21 @@ public class UserServiceImpl implements UserService {
         if (count == 0) {
             throw new ImoocMallException(ImoocMallExceptionEnum.INSERT_FAILED);
         }
+    }
+
+    @Override
+    public User login(String userName, String password) throws ImoocMallException {
+        String md5Password = null;
+        try {
+            md5Password = MD5Utils.getMD5Str(password);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        User user = userMapper.selectLogin(userName, md5Password);
+        if (user == null) {
+            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_PASSWORD);
+        }
+        return user;
     }
 }
