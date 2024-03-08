@@ -62,4 +62,20 @@ public class UserController {
         session.setAttribute(Constant.IMOOC_MALL_USER, user);
         return ApiRestResponse.success(user);
     }
+
+    @PostMapping("/user/update")
+    @ResponseBody
+    public ApiRestResponse<User> updateUserInfo(HttpSession session,
+                                                @RequestParam("signature") String signature) throws ImoocMallException {
+        User currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);
+        if (currentUser == null) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN);
+        }
+
+        User user = new User();
+        user.setId(currentUser.getId());
+        user.setPersonalizedSignature(signature);
+        userService.updateInformation(user);
+        return ApiRestResponse.success();
+    }
 }

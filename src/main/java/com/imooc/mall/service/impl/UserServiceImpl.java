@@ -1,6 +1,5 @@
 package com.imooc.mall.service.impl;
 
-import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.dao.UserMapper;
@@ -58,5 +57,14 @@ public class UserServiceImpl implements UserService {
             throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_PASSWORD);
         }
         return user;
+    }
+
+    @Override
+    public void updateInformation(User user) throws ImoocMallException {
+        //更新个性签名
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if (updateCount > 1) {
+            throw new ImoocMallException(ImoocMallExceptionEnum.UPDATE_FAILED);
+        }
     }
 }
