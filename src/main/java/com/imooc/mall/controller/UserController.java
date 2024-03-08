@@ -85,4 +85,27 @@ public class UserController {
         session.removeAttribute(Constant.IMOOC_MALL_USER);
         return ApiRestResponse.success();
     }
+
+    @PostMapping("/adminLogin")
+    @ResponseBody
+    public ApiRestResponse<User> adminLogin(@RequestParam("userName") String userName,
+                                            @RequestParam("password") String password,
+                                            HttpSession session) throws ImoocMallException {
+        if (StringUtils.isEmpty(userName)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
+        }
+        if (StringUtils.isEmpty(password)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
+        }
+
+        User user = userService.login(userName, password);
+        //校验是否是管理员
+        if (userService.checkAdminRole(user)) {
+            user.setPassword(null);
+            session.setAttribute(Constant.IMOOC_MALL_USER, user);
+            return ApiRestResponse.success(user);
+        } else {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN);
+        }
+    }
 }
