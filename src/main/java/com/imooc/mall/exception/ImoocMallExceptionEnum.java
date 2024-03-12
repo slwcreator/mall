@@ -12,7 +12,7 @@ public enum ImoocMallExceptionEnum {
     INSERT_FAILED(10005, "用户插入失败，请重试"),
     WRONG_PASSWORD(10006, "用户名或密码错误"),
     NEED_LOGIN(10007, "用户未登录"),
-    UPDATE_FAILED(10008, "用户信息更新失败"),
+    UPDATE_FAILED(10008, "更新失败"),
     NEED_ADMIN(10009, "无管理员权限"),
     PARAM_NOT_NULL(10010, "参数不能为空"),
     CREATE_FAILED(10011, "新增失败"),

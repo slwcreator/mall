@@ -6,6 +6,7 @@ import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.pojo.Category;
 import com.imooc.mall.model.pojo.User;
 import com.imooc.mall.model.request.AddCategoryReq;
+import com.imooc.mall.model.request.UpdateCategoryReq;
 import com.imooc.mall.service.CategoryService;
 import com.imooc.mall.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +42,24 @@ public class CategoryController {
         //校验是否是管理员
         if (userService.checkAdminRole(currentUser)) {
             categoryService.add(addCategoryReq);
+            return ApiRestResponse.success();
+        } else {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN);
+        }
+    }
+
+    @ApiOperation("后台更新商品分类目录")
+    @PostMapping("/admin/category/update")
+    @ResponseBody
+    public ApiRestResponse<Category> updateCategory(HttpSession session,
+                                                    @Valid @RequestBody UpdateCategoryReq updateCategoryReq) {
+        User currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);
+        if (currentUser == null) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN);
+        }
+        //校验是否是管理员
+        if (userService.checkAdminRole(currentUser)) {
+            categoryService.update(updateCategoryReq);
             return ApiRestResponse.success();
         } else {
             return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN);
