@@ -5,6 +5,7 @@ import com.imooc.mall.common.ApiRestResponse;
 import com.imooc.mall.model.pojo.Category;
 import com.imooc.mall.model.request.AddCategoryReq;
 import com.imooc.mall.model.request.UpdateCategoryReq;
+import com.imooc.mall.model.vo.CategoryVO;
 import com.imooc.mall.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 目录控制器
@@ -55,5 +57,13 @@ public class CategoryController {
     public ApiRestResponse<PageInfo<Category>> listCategoryForAdmin(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         PageInfo<Category> pageInfo = categoryService.listForAdmin(pageNum, pageSize);
         return ApiRestResponse.success(pageInfo);
+    }
+
+    @ApiOperation("前台分类目录列表")
+    @GetMapping("/category/list")
+    @ResponseBody
+    public ApiRestResponse<List<CategoryVO>> listCategoryForCustomer() {
+        List<CategoryVO> categoryVOList = categoryService.listForCustomer();
+        return ApiRestResponse.success(categoryVOList);
     }
 }
