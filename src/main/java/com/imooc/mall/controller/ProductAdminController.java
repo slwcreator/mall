@@ -6,8 +6,10 @@ import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.pojo.Product;
 import com.imooc.mall.model.request.AddProductReq;
+import com.imooc.mall.model.request.UpdateProductReq;
 import com.imooc.mall.service.ProductService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -81,6 +83,22 @@ public class ProductAdminController {
     @PostMapping("/admin/product/add")
     public ApiRestResponse<Product> addProduct(@Valid @RequestBody AddProductReq addProductReq) {
         productService.add(addProductReq);
+        return ApiRestResponse.success();
+    }
+
+    @ApiOperation("更新商品")
+    @PostMapping("/admin/product/update")
+    public ApiRestResponse<Product> updateProduct(@Valid @RequestBody UpdateProductReq updateProductReq) {
+        Product product = new Product();
+        BeanUtils.copyProperties(updateProductReq, product);
+        productService.update(product);
+        return ApiRestResponse.success();
+    }
+
+    @ApiOperation("删除商品")
+    @PostMapping("/admin/product/delete")
+    public ApiRestResponse<Product> deleteProduct(@RequestParam Integer id) {
+        productService.delete(id);
         return ApiRestResponse.success();
     }
 }
