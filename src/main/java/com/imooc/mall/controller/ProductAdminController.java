@@ -4,13 +4,19 @@ import com.imooc.mall.common.ApiRestResponse;
 import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
+import com.imooc.mall.model.pojo.Product;
+import com.imooc.mall.model.request.AddProductReq;
+import com.imooc.mall.service.ProductService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -18,8 +24,14 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * 后台商品管理 Controller
+ */
 @RestController
 public class ProductAdminController {
+
+    @Resource
+    ProductService productService;
 
     @ApiOperation("上传文件")
     @PostMapping("/admin/upload/file")
@@ -63,5 +75,12 @@ public class ProductAdminController {
             effectiveURI = null;
         }
         return effectiveURI;
+    }
+
+    @ApiOperation("新增商品")
+    @PostMapping("/admin/product/add")
+    public ApiRestResponse<Product> addProduct(@Valid @RequestBody AddProductReq addProductReq) {
+        productService.add(addProductReq);
+        return ApiRestResponse.success();
     }
 }
