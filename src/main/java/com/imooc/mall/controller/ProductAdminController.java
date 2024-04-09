@@ -1,5 +1,6 @@
 package com.imooc.mall.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.imooc.mall.common.ApiRestResponse;
 import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
@@ -10,10 +11,7 @@ import com.imooc.mall.model.request.UpdateProductReq;
 import com.imooc.mall.service.ProductService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -108,5 +106,13 @@ public class ProductAdminController {
                                                           @RequestParam Integer sellStatus) {
         productService.batchUpdateSellStatus(ids, sellStatus);
         return ApiRestResponse.success();
+    }
+
+    @ApiOperation("后台商品列表")
+    @GetMapping("/admin/product/list")
+    public ApiRestResponse<PageInfo<Product>> list(@RequestParam Integer pageNum,
+                                                   @RequestParam Integer pageSize) {
+        PageInfo<Product> productPageInfo = productService.listForAdmin(pageNum, pageSize);
+        return ApiRestResponse.success(productPageInfo);
     }
 }
