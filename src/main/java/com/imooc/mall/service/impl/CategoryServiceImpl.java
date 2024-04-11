@@ -81,7 +81,7 @@ public class CategoryServiceImpl implements CategoryService {
      * 递归查询得到分类目录数据（针对前台的）
      */
     @Override
-    public List<CategoryVO> listForCustomer() {
+    public List<CategoryVO> listForCustomer(Integer parentId) {
         //定义一个 List，这个 List 就用来存放最终的查询结果；即这个 List 中的直接元素是：所有的 parent_id=0，即type=1的，第1级别的目录；
         List<CategoryVO> categoryVOList = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
         该方法的第二个参数是：当前级别目录的 parent_id，即也就是当前级别的上一级目录的id；
         即，第一个参数是【上一级别的List<CategoryVO> categoryVOList】；第二参数是【下一级别的 parent_id，也就是当前级别的id】；
         */
-        recursivelyFindCategories(categoryVOList, 0);
+        recursivelyFindCategories(categoryVOList, parentId);
         return categoryVOList;
     }
 
