@@ -1,8 +1,11 @@
 package com.imooc.mall.model.dao;
 
 import com.imooc.mall.model.pojo.Cart;
+import com.imooc.mall.model.vo.CartVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface CartMapper {
@@ -19,4 +22,6 @@ public interface CartMapper {
     int updateByPrimaryKey(Cart record);
 
     Cart selectCartByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
+
+    List<CartVO> selectList(Integer userId);
 }

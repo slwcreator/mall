@@ -15,9 +15,9 @@ public class CartVO {
 
     private Integer totalPrice;
 
-    private Integer productName;
+    private String productName;
 
-    private Integer productImage;
+    private String productImage;
 
     public Integer getId() {
         return id;
@@ -75,19 +75,19 @@ public class CartVO {
         this.totalPrice = totalPrice;
     }
 
-    public Integer getProductName() {
+    public String getProductName() {
         return productName;
     }
 
-    public void setProductName(Integer productName) {
+    public void setProductName(String productName) {
         this.productName = productName;
     }
 
-    public Integer getProductImage() {
+    public String getProductImage() {
         return productImage;
     }
 
-    public void setProductImage(Integer productImage) {
+    public void setProductImage(String productImage) {
         this.productImage = productImage;
     }
 }
