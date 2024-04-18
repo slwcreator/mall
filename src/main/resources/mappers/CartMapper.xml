@@ -134,4 +134,12 @@
     from imooc_mall_cart
     where user_id = #{userId} and product_id = #{productId}
   </select>
+  <update id="selectOrNot" parameterType="map">
+    UPDATE imooc_mall_cart
+    SET selected = #{selected}
+    WHERE user_id = #{userId}
+    <if test="productId != null">
+      AND product_id = #{productId}
+    </if>
+  </update>
 </mapper>
