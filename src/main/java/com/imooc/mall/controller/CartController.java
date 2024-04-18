@@ -34,4 +34,18 @@ public class CartController {
         List<CartVO> cartVOList = cartService.add(UserFilter.currentUser.getId(), productId, count);
         return ApiRestResponse.success(cartVOList);
     }
+
+    @PostMapping("/update")
+    @ApiOperation("更新购物车中某个商品的数量")
+    public ApiRestResponse<List<CartVO>> update(@RequestParam Integer productId, @RequestParam Integer count) {
+        List<CartVO> cartVOList = cartService.update(UserFilter.currentUser.getId(), productId, count);
+        return ApiRestResponse.success(cartVOList);
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation("删除购物车中的某个商品")
+    public ApiRestResponse<List<CartVO>> delete(@RequestParam Integer productId) {
+        List<CartVO> cartVOList = cartService.delete(UserFilter.currentUser.getId(), productId);
+        return ApiRestResponse.success(cartVOList);
+    }
 }
