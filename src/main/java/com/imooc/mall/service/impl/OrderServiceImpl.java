@@ -1,5 +1,7 @@
 package com.imooc.mall.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
@@ -18,6 +20,7 @@ import com.imooc.mall.model.vo.OrderVO;
 import com.imooc.mall.service.CartService;
 import com.imooc.mall.service.OrderService;
 import com.imooc.mall.util.OrderCodeFactory;
+import com.imooc.mall.util.PageUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -175,5 +178,36 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setOrderItemVOList(orderItemVOList);
         orderVO.setOrderStatusName(Constant.OrderStatusEnum.codeOf(order.getOrderStatus()).getValue());
         return orderVO;
+    }
+
+    @Override
+    public PageInfo<OrderVO> listForCustomer(Integer pageNum, Integer pageSize) {
+        Integer userId = UserFilter.currentUser.getId();
+
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectOrderForCustomer(userId);
+        PageInfo<Order> pageInfoPO = new PageInfo<>(orderList);
+
+        //当前页的记录数，起始行号，结束行号
+        int size = pageInfoPO.getSize();
+        long startRow = pageInfoPO.getStartRow();
+        long endRow = pageInfoPO.getEndRow();
+
+        List<OrderVO> orderVOList = orderListToOrderVOList(orderList);
+        PageInfo<OrderVO> pageInfoVO = PageUtils.pageInfo2PageInfoVO(pageInfoPO);
+        pageInfoVO.setList(orderVOList);
+        pageInfoVO.setSize(size);
+        pageInfoVO.setStartRow(startRow);
+        pageInfoVO.setEndRow(endRow);
+        return pageInfoVO;
+    }
+
+    private List<OrderVO> orderListToOrderVOList(List<Order> orderList) {
+        List<OrderVO> orderVOList = new ArrayList<>();
+        for (Order order : orderList) {
+            OrderVO orderVO = getOrderVO(order);
+            orderVOList.add(orderVO);
+        }
+        return orderVOList;
     }
 }
