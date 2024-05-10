@@ -255,4 +255,24 @@ public class OrderServiceImpl implements OrderService {
         }
         return "http://" + address + "/images/" + orderNo + ".png";
     }
+
+    @Override
+    public PageInfo<OrderVO> listForAdmin(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectAllForAdmin();
+        PageInfo<Order> pageInfoPO = new PageInfo<>(orderList);
+
+        //当前页的记录数，起始行号，结束行号
+        int size = pageInfoPO.getSize();
+        long startRow = pageInfoPO.getStartRow();
+        long endRow = pageInfoPO.getEndRow();
+
+        List<OrderVO> orderVOList = orderListToOrderVOList(orderList);
+        PageInfo<OrderVO> pageInfoVO = PageUtils.pageInfo2PageInfoVO(pageInfoPO);
+        pageInfoVO.setList(orderVOList);
+        pageInfoVO.setSize(size);
+        pageInfoVO.setStartRow(startRow);
+        pageInfoVO.setEndRow(endRow);
+        return pageInfoVO;
+    }
 }
