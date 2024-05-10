@@ -50,4 +50,11 @@ public class OrderController {
         String pngAddress = orderService.qrcode(orderNo);
         return ApiRestResponse.success(pngAddress);
     }
+
+    @PostMapping("/pay")
+    @ApiOperation("支付订单接口")
+    public ApiRestResponse<String> pay(@RequestParam String orderNo) {
+        orderService.pay(orderNo);
+        return ApiRestResponse.success();
+    }
 }
