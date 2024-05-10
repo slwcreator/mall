@@ -2,6 +2,7 @@ package com.imooc.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.zxing.WriterException;
 import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
@@ -21,12 +22,18 @@ import com.imooc.mall.service.CartService;
 import com.imooc.mall.service.OrderService;
 import com.imooc.mall.util.OrderCodeFactory;
 import com.imooc.mall.util.PageUtils;
+import com.imooc.mall.util.QRCodeGenerator;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +55,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     OrderItemMapper orderItemMapper;
+
+    @Value("${file.upload.ip}")
+    String ip;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -230,5 +240,19 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
         }
+    }
+
+    @Override
+    public String qrcode(String orderNo) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        String address = ip + ":" + request.getLocalPort();
+        String payUrl = "http://" + address + "/pay?orderNo=" + orderNo;
+        try {
+            QRCodeGenerator.generateQRCode(payUrl, 350, 350, Constant.FILE_UPLOAD_DIR + orderNo + ".png");
+        } catch (WriterException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "http://" + address + "/images/" + orderNo + ".png";
     }
 }

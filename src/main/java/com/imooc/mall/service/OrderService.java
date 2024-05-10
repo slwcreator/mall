@@ -12,4 +12,6 @@ public interface OrderService {
     PageInfo<OrderVO> listForCustomer(Integer pageNum, Integer pageSize);
 
     void cancel(String orderNo);
+
+    String qrcode(String orderNo);
 }
