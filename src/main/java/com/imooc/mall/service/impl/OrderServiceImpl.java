@@ -291,4 +291,19 @@ public class OrderServiceImpl implements OrderService {
             throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
         }
     }
+
+    @Override
+    public void delivered(String orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            throw new ImoocMallException(ImoocMallExceptionEnum.NO_ORDER);
+        }
+        if (Objects.equals(order.getOrderStatus(), Constant.OrderStatusEnum.PAID.getCode())) {
+            order.setOrderStatus(Constant.OrderStatusEnum.DELIVERED.getCode());
+            order.setDeliveryTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
 }

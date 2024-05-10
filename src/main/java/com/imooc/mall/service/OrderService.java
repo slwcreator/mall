@@ -18,4 +18,6 @@ public interface OrderService {
     PageInfo<OrderVO> listForAdmin(Integer pageNum, Integer pageSize);
 
     void pay(String orderNo);
+
+    void delivered(String orderNo);
 }
