@@ -31,4 +31,14 @@ public class OrderAdminController {
         orderService.delivered(orderNo);
         return ApiRestResponse.success();
     }
+
+    /*
+     * 管理员和用户都可以调用
+     */
+    @PostMapping("/order/finish")
+    @ApiOperation("完结订单")
+    public ApiRestResponse<String> finish(@RequestParam String orderNo) {
+        orderService.finish(orderNo);
+        return ApiRestResponse.success();
+    }
 }

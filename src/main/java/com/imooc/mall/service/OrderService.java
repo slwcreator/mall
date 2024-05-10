@@ -20,4 +20,6 @@ public interface OrderService {
     void pay(String orderNo);
 
     void delivered(String orderNo);
+
+    void finish(String orderNo);
 }
