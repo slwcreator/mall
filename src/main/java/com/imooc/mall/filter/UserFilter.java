@@ -23,7 +23,8 @@ import java.io.PrintWriter;
  */
 public class UserFilter implements Filter {
 
-    public static User currentUser;
+    public static ThreadLocal<User> userThreadLocal = new ThreadLocal<>();
+    public static User currentUser = new User();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -44,7 +45,6 @@ public class UserFilter implements Filter {
         JWTVerifier jwtVerifier = JWT.require(algorithm).build();
         try {
             DecodedJWT jwt = jwtVerifier.verify(token);
-            currentUser = new User();
             currentUser.setId(jwt.getClaim(Constant.USER_ID).asInt());
             currentUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
             currentUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
@@ -59,7 +59,7 @@ public class UserFilter implements Filter {
             getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.SYSTEM_ERROR));
             return;
         }
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, response);
     }
 
     @Override

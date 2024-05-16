@@ -164,7 +164,7 @@ public class UserController {
     @GetMapping("/loginWithJwt")
     @ResponseBody
     public ApiRestResponse<String> loginWithJwt(@RequestParam("userName") String userName,
-                                              @RequestParam("password") String password) throws ImoocMallException {
+                                                @RequestParam("password") String password) throws ImoocMallException {
         if (StringUtils.isEmpty(userName)) {
             return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
         }
@@ -183,5 +183,38 @@ public class UserController {
                 .withExpiresAt(new Date(System.currentTimeMillis() + Constant.EXPIRE_TIME))
                 .sign(algorithm);
         return ApiRestResponse.success(token);
+    }
+
+    /**
+     * 管理员 JWT 登录接口
+     */
+    @GetMapping("/adminLoginWithJwt")
+    @ResponseBody
+    public ApiRestResponse<String> adminLoginWithJwt(@RequestParam("userName") String userName,
+                                                     @RequestParam("password") String password) throws ImoocMallException {
+        if (StringUtils.isEmpty(userName)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
+        }
+        if (StringUtils.isEmpty(password)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
+        }
+        User user = userService.login(userName, password);
+        //校验是否是管理员
+        if (userService.checkAdminRole(user)) {
+            //是管理员，执行操作
+            //保存用户信息时，不保存密码
+            user.setPassword(null);
+            Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+            String token = JWT.create()
+                    .withClaim(Constant.USER_NAME, user.getUsername())
+                    .withClaim(Constant.USER_ID, user.getId())
+                    .withClaim(Constant.USER_ROLE, user.getRole())
+                    //过期时间
+                    .withExpiresAt(new Date(System.currentTimeMillis() + Constant.EXPIRE_TIME))
+                    .sign(algorithm);
+            return ApiRestResponse.success(token);
+        } else {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN);
+        }
     }
 }
