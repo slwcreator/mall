@@ -14,11 +14,12 @@ public class UserFilterConfig {
     }
 
     @Bean(name = "userFilterConf")
-    public FilterRegistrationBean<UserFilter> adminFilterConfig() {
+    public FilterRegistrationBean<UserFilter> userFilterConf() {
         FilterRegistrationBean<UserFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(userFilter());
         filterRegistrationBean.addUrlPatterns("/cart/*");
         filterRegistrationBean.addUrlPatterns("/order/*");
+        filterRegistrationBean.addUrlPatterns("/user/update");
         filterRegistrationBean.setName("userFilterConf");
         return filterRegistrationBean;
     }

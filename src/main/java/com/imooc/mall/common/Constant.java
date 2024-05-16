@@ -72,6 +72,7 @@ public class Constant {
     }
 
     public static final String JWT_KEY = "imooc-mall";
+    public static final String JWT_TOKEN = "jwt_token";
     public static final String USER_ID = "user_id";
     public static final String USER_NAME = "user_name";
     public static final String USER_ROLE = "user_role";
