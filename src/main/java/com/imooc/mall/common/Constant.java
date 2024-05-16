@@ -70,4 +70,10 @@ public class Constant {
             return value;
         }
     }
+
+    public static final String JWT_KEY = "imooc-mall";
+    public static final String USER_ID = "user_id";
+    public static final String USER_NAME = "user_name";
+    public static final String USER_ROLE = "user_role";
+    public static final Long EXPIRE_TIME = 1000 * 60 * 60 * 24 * 2L; //单位是毫秒，这里是两天
 }

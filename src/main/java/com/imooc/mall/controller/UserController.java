@@ -1,5 +1,7 @@
 package com.imooc.mall.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.imooc.mall.common.ApiRestResponse;
 import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 @Controller
 public class UserController {
@@ -156,5 +159,29 @@ public class UserController {
         } else {
             return ApiRestResponse.error(ImoocMallExceptionEnum.WRONG_EMAIL);
         }
+    }
+
+    @GetMapping("/loginWithJwt")
+    @ResponseBody
+    public ApiRestResponse<String> loginWithJwt(@RequestParam("userName") String userName,
+                                              @RequestParam("password") String password) throws ImoocMallException {
+        if (StringUtils.isEmpty(userName)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
+        }
+        if (StringUtils.isEmpty(password)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
+        }
+
+        User user = userService.login(userName, password);
+        user.setPassword(null);
+        Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+        String token = JWT.create()
+                .withClaim(Constant.USER_ID, user.getId())
+                .withClaim(Constant.USER_NAME, user.getUsername())
+                .withClaim(Constant.USER_ROLE, user.getRole())
+                //过期时间
+                .withExpiresAt(new Date(System.currentTimeMillis() + Constant.EXPIRE_TIME))
+                .sign(algorithm);
+        return ApiRestResponse.success(token);
     }
 }
