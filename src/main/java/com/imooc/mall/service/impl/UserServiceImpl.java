@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(String userName, String password) throws ImoocMallException {
+    public void register(String userName, String password, String emailAddress) throws ImoocMallException {
         //查询用户名是否存在，不允许重名
         User result = userMapper.selectByName(userName);
         if (result != null) {
@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setUsername(userName);
+        user.setEmailAddress(emailAddress);
         try {
             user.setPassword(MD5Utils.getMD5Str(password));
         } catch (NoSuchAlgorithmException e) {

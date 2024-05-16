@@ -34,8 +34,21 @@ public class EmailServiceImpl implements EmailService {
         RBucket<String> bucket = client.getBucket(emailAddress);
         boolean exists = bucket.isExists();
         if (!exists) {
-            bucket.set(verificationCode, 60, TimeUnit.SECONDS);
+            bucket.set(verificationCode, 600, TimeUnit.SECONDS);
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean checkEmailAndCode(String emailAddress, String verificationCode) {
+        RedissonClient client = Redisson.create();
+        RBucket<String> bucket = client.getBucket(emailAddress);
+        boolean exists = bucket.isExists();
+        if (exists) {
+            String code = bucket.get();
+            //redis 存的验证码和用户传过来的一致则校验通过
+            return code.equals(verificationCode);
         }
         return false;
     }

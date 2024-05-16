@@ -35,18 +35,37 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseBody
-    public ApiRestResponse<User> register(@RequestParam("userName") String userName, @RequestParam("password") String password) throws ImoocMallException {
+    public ApiRestResponse<User> register(@RequestParam("userName") String userName,
+                                          @RequestParam("password") String password,
+                                          @RequestParam("emailAddress") String emailAddress,
+                                          @RequestParam("verificationCode") String verificationCode) throws ImoocMallException {
         if (StringUtils.isEmpty(userName)) {
             return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
         }
         if (StringUtils.isEmpty(password)) {
             return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
         }
-
         if (password.length() < 8) {
             return ApiRestResponse.error(ImoocMallExceptionEnum.PASSWORD_TOO_SHORT);
         }
-        userService.register(userName, password);
+
+        if (StringUtils.isEmpty(emailAddress)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_EMAIL_ADDRESS);
+        }
+        if (StringUtils.isEmpty(verificationCode)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_VERIFICATION_CODE);
+        }
+        //如果邮箱已注册，则不再允许注册
+        boolean emailPassed = userService.checkEmailRegistered(emailAddress);
+        if (!emailPassed) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.EMAIL_ALREADY_BEEN_REGISTERED);
+        }
+        //检验邮箱和验证码是否匹配
+        Boolean passEmailAndCode = emailService.checkEmailAndCode(emailAddress, verificationCode);
+        if (!passEmailAndCode) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.WRONG_VERIFICATION_CODE);
+        }
+        userService.register(userName, password, emailAddress);
         return ApiRestResponse.success();
     }
 
