@@ -115,4 +115,23 @@ public class ProductAdminController {
         PageInfo<Product> productPageInfo = productService.listForAdmin(pageNum, pageSize);
         return ApiRestResponse.success(productPageInfo);
     }
+
+    @ApiOperation("后台批量上传商品接口")
+    @PostMapping("/admin/upload/product")
+    public ApiRestResponse<String> uploadProduct(@RequestParam("file") MultipartFile file) throws IOException {
+        String filename = file.getOriginalFilename();
+        String suffixName = filename.substring(filename.lastIndexOf("."));
+        UUID uuid = UUID.randomUUID();
+        String newFileName = uuid.toString() + suffixName;
+        File destDirectory = new File(Constant.FILE_UPLOAD_DIR);
+        File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
+        if (!destDirectory.exists()) {
+            if (!destDirectory.mkdir()) {
+                throw new ImoocMallException(ImoocMallExceptionEnum.MKDIR_FAILED);
+            }
+        }
+        file.transferTo(destFile);
+        productService.addProductByExcel(destFile);
+        return ApiRestResponse.success();
+    }
 }
