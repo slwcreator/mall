@@ -229,4 +229,23 @@
     from imooc_mall_order
     order by create_time desc
   </select>
+  <resultMap id="listOrderStatisticsMap" type="com.imooc.mall.model.vo.OrderStatisticsVO">
+    <result column="days" jdbcType="TIMESTAMP" property="days"/>
+    <result column="amount" jdbcType="INTEGER" property="amount"/>
+  </resultMap>
+  <select id="selectOrderStatistics" resultMap="listOrderStatisticsMap">
+    SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS days,
+    COUNT(*) AS amount
+    FROM imooc_mall_order
+    <where>
+      <if test="query.startDate != null">
+        <![CDATA[AND create_time >= #{query.startDate}]]>
+      </if>
+      <if test="query.endDate != null">
+        <![CDATA[AND create_time <= #{query.endDate}]]>
+      </if>
+    </where>
+    GROUP BY days
+    ORDER BY days
+  </select>
 </mapper>
