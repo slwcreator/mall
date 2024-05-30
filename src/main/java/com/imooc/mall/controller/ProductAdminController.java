@@ -15,6 +15,7 @@ import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.apache.poi.hpsf.Thumbnail;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,12 @@ public class ProductAdminController {
     @Resource
     ProductService productService;
 
+    @Value("${file.upload.uri}")
+    String uri;
+
+    @Value("${file.upload.uri.scheme}")
+    String scheme;
+
     @ApiOperation("上传文件")
     @PostMapping("/admin/upload/file")
     public ApiRestResponse<String> upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
@@ -53,13 +60,8 @@ public class ProductAdminController {
         File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
 
         createFile(file, fileDirectory, destFile);
-        try {
-            return ApiRestResponse.success(getHost(new URI(request.getRequestURL() + ""))
-                    + "/images/" + newFileName);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
-        }
+        String address = uri;
+        return ApiRestResponse.success(scheme + address + "/images/" + newFileName);
     }
 
     private URI getHost(URI uri) {
@@ -145,13 +147,8 @@ public class ProductAdminController {
                         ImageIO.read(new File(Constant.FILE_UPLOAD_DIR + Constant.WATER_MARK_JPG)),
                         Constant.IMAGE_OPACITY)
                 .toFile(new File(Constant.FILE_UPLOAD_DIR + newFileName));
-        try {
-            return ApiRestResponse.success(getHost(new URI(request.getRequestURL() + ""))
-                    + "/images/" + newFileName);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
-        }
+        String address = uri;
+        return ApiRestResponse.success(scheme + address + "/images/" + newFileName);
     }
 
     private static void createFile(MultipartFile file, File fileDirectory, File destFile) {

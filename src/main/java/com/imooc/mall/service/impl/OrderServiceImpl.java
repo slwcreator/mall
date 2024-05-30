@@ -61,8 +61,11 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     UserService userService;
 
-    @Value("${file.upload.ip}")
-    String ip;
+    @Value("${file.upload.uri}")
+    String uri;
+
+    @Value("${file.upload.uri.scheme}")
+    String scheme;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -249,16 +252,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String qrcode(String orderNo) {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        String address = ip + ":" + request.getLocalPort();
-        String payUrl = "http://" + address + "/pay?orderNo=" + orderNo;
+        String address = uri;
+        String payUrl = scheme + address + "/pay?orderNo=" + orderNo;
         try {
             QRCodeGenerator.generateQRCode(payUrl, 350, 350, Constant.FILE_UPLOAD_DIR + orderNo + ".png");
         } catch (WriterException | IOException e) {
             throw new RuntimeException(e);
         }
-        return "http://" + address + "/images/" + orderNo + ".png";
+        return scheme + address + "/images/" + orderNo + ".png";
     }
 
     @Override
