@@ -243,7 +243,7 @@ public class OrderServiceImpl implements OrderService {
             order.setEndTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.CANCEL_WRONG_ORDER_STATUS);
         }
     }
 
@@ -292,7 +292,7 @@ public class OrderServiceImpl implements OrderService {
             order.setPayTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.PAY_WRONG_ORDER_STATUS);
         }
     }
 
@@ -307,7 +307,7 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.DELIVER_WRONG_ORDER_STATUS);
         }
     }
 
@@ -328,7 +328,7 @@ public class OrderServiceImpl implements OrderService {
             order.setEndTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.FINISH_WRONG_ORDER_STATUS);
         }
     }
 }

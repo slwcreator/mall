@@ -35,6 +35,10 @@ public enum ImoocMallExceptionEnum {
     WRONG_VERIFICATION_CODE(10028, "验证码错误"),
     TOKEN_EXPIRED(10029, "token过期"),
     TOKEN_WRONG(10030, "token错误"),
+    CANCEL_WRONG_ORDER_STATUS(10033, "订单状态有误，付款后不支持取消订单"),
+    PAY_WRONG_ORDER_STATUS(10034, "订单状态有误，仅能在未付款时付款"),
+    DELIVER_WRONG_ORDER_STATUS(10035, "订单状态有误，仅能在付款后发货"),
+    FINISH_WRONG_ORDER_STATUS(10036, "订单状态有误，仅能在发货后完结订单"),
     SYSTEM_ERROR(20000, "系统异常");
 
     //异常码
