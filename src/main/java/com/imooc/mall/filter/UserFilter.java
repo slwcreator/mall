@@ -35,31 +35,35 @@ public class UserFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setContentType("application/json;charset=utf-8");
-        String token = request.getHeader(Constant.JWT_TOKEN);
-        if (token == null) {
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN));
-            return;
-        }
+        if ("OPTIONS".equals(request.getMethod())) {
+            filterChain.doFilter(request, response);
+        } else {
+            String token = request.getHeader(Constant.JWT_TOKEN);
+            if (token == null) {
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN));
+                return;
+            }
 
-        Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
-        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
-        try {
-            DecodedJWT jwt = jwtVerifier.verify(token);
-            currentUser.setId(jwt.getClaim(Constant.USER_ID).asInt());
-            currentUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
-            currentUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
-        } catch (TokenExpiredException e) {
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_EXPIRED));
-            return;
-        } catch (JWTDecodeException e) {
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_WRONG));
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.SYSTEM_ERROR));
-            return;
+            Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+            JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+            try {
+                DecodedJWT jwt = jwtVerifier.verify(token);
+                currentUser.setId(jwt.getClaim(Constant.USER_ID).asInt());
+                currentUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
+                currentUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
+            } catch (TokenExpiredException e) {
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_EXPIRED));
+                return;
+            } catch (JWTDecodeException e) {
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_WRONG));
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.SYSTEM_ERROR));
+                return;
+            }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
     }
 
     @Override

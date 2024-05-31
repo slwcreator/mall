@@ -40,38 +40,42 @@ public class AdminFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setContentType("application/json;charset=utf-8");
-        String token = request.getHeader(Constant.JWT_TOKEN);
-        if (StringUtils.isEmpty(token)) {
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN));
-            return;
-        }
-
-        Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        try {
-            DecodedJWT jwt = verifier.verify(token);
-            currentUser = new User();
-            currentUser.setId(jwt.getClaim(Constant.USER_ID).asInt());
-            currentUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
-            currentUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
-            UserFilter.userThreadLocal.set(currentUser);
-        } catch (TokenExpiredException e) {
-            //token过期，抛出异常
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_EXPIRED));
-            return;
-        } catch (JWTDecodeException e) {
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_WRONG));
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.SYSTEM_ERROR));
-            return;
-        }
-        //校验是否是管理员
-        if (userService.checkAdminRole(currentUser)) {
+        if ("OPTIONS".equals(request.getMethod())) {
             filterChain.doFilter(request, response);
         } else {
-            getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN));
+            String token = request.getHeader(Constant.JWT_TOKEN);
+            if (StringUtils.isEmpty(token)) {
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN));
+                return;
+            }
+
+            Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            try {
+                DecodedJWT jwt = verifier.verify(token);
+                currentUser = new User();
+                currentUser.setId(jwt.getClaim(Constant.USER_ID).asInt());
+                currentUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
+                currentUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
+                UserFilter.userThreadLocal.set(currentUser);
+            } catch (TokenExpiredException e) {
+                //token过期，抛出异常
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_EXPIRED));
+                return;
+            } catch (JWTDecodeException e) {
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.TOKEN_WRONG));
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.SYSTEM_ERROR));
+                return;
+            }
+            //校验是否是管理员
+            if (userService.checkAdminRole(currentUser)) {
+                filterChain.doFilter(request, response);
+            } else {
+                getOutException(response, ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN));
+            }
         }
     }
 
