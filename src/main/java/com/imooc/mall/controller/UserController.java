@@ -106,7 +106,7 @@ public class UserController {
         return ApiRestResponse.success();
     }
 
-    @GetMapping("/user/logout")
+    @PostMapping("/user/logout")
     @ResponseBody
     public ApiRestResponse<User> logout(HttpSession session) {
         session.removeAttribute(Constant.IMOOC_MALL_USER);

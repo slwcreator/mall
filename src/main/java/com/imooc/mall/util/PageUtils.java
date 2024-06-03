@@ -10,7 +10,6 @@ public class PageUtils {
      * @param pageInfoPO PageInfo<PO>对象</>
      * @param <P>        PO类型
      * @param <V>        VO类型
-     * @return
      */
     public static <P, V> PageInfo<V> pageInfo2PageInfoVO(PageInfo<P> pageInfoPO) {
         // 创建 Page 对象，实际上是一个 ArrayList 类型的集合

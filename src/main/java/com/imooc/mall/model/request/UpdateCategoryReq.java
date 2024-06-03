@@ -71,4 +71,16 @@ public class UpdateCategoryReq {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public String toString() {
+        return "UpdateCategoryReq{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                ", parentId=" + parentId +
+                ", orderNum=" + orderNum +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }
